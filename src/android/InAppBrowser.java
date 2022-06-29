@@ -1084,7 +1084,13 @@ public class InAppBrowser extends CordovaPlugin {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         LOG.d(LOG_TAG, "onActivityResult");
         // If RequestCode or Callback is Invalid
-        if(requestCode != FILECHOOSER_REQUESTCODE ||requestCode != 999 || mUploadCallback == null) {
+        if(requestCode == 999){
+            mUploadCallback.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, intent));
+            mUploadCallback = null;
+            return;
+        }
+        // If RequestCode or Callback is Invalid
+        if(requestCode != FILECHOOSER_REQUESTCODE  || mUploadCallback == null) {
             super.onActivityResult(requestCode, resultCode, intent);
             return;
         }
