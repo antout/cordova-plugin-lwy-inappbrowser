@@ -117,6 +117,7 @@ public class InAppBrowser extends CordovaPlugin {
     private static final String FOOTER_COLOR = "footercolor";
     private static final String BEFORELOAD = "beforeload";
     private static final String FULLSCREEN = "fullscreen";
+    private static final String SHOOT_SECOND = "shootSecond";
 
     private static final List customizableOptions = Arrays.asList(CLOSE_BUTTON_CAPTION, TOOLBAR_COLOR, NAVIGATION_COLOR, CLOSE_BUTTON_COLOR, FOOTER_COLOR);
 
@@ -146,6 +147,8 @@ public class InAppBrowser extends CordovaPlugin {
     private String footerColor = "";
     private String beforeload = "";
     private boolean fullscreen = true;
+    //默认为10秒拍摄时间
+    private int shootSecond = 10;
     private String[] allowedSchemes;
     private InAppBrowserClient currentClient;
 
@@ -436,7 +439,7 @@ public class InAppBrowser extends CordovaPlugin {
                     String key = option.nextToken();
                     String value = option.nextToken();
                     if (!customizableOptions.contains(key)) {
-                        value = value.equals("yes") || value.equals("no") ? value : "yes";
+                        value = value.equals("yes") || value.equals("no") || (value!=null&&!value.trim().equals(""))? value : "yes";
                     }
                     map.put(key, value);
                 }
@@ -710,6 +713,10 @@ public class InAppBrowser extends CordovaPlugin {
             String fullscreenSet = features.get(FULLSCREEN);
             if (fullscreenSet != null) {
                 fullscreen = fullscreenSet.equals("yes") ? true : false;
+            }
+            String shootSecondSet = features.get(SHOOT_SECOND);
+            if (shootSecondSet != null) {
+                shootSecond = Integer.parseInt(shootSecondSet);
             }
         }
 
@@ -1471,7 +1478,7 @@ public class InAppBrowser extends CordovaPlugin {
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
         //限制时长
-        intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 10);
+        intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, 5);
         //开启摄像机
         this.cordova.getActivity().startActivityForResult(intent, 999);
         this.cordova.setActivityResultCallback(this);
